@@ -1,0 +1,36 @@
+﻿<Window x:Class="SpencerAutoClicker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SpencerAutoClicker"
+        mc:Ignorable="d"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="Spencer Auto Clicker" Height="500" Width="335" 
+        MinHeight="500" MinWidth="335" ResizeMode="CanResizeWithGrip" Icon="/apathyclan.png" Loaded="Window_Loaded">
+    <Grid Background="#FF2F3542" Margin="0,0,0,1" HorizontalAlignment="Stretch">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid x:Name="process_container" HorizontalAlignment="Center" VerticalAlignment="Top" FlowDirection="LeftToRight" 
+              Height="40" Margin="10,10,10,0">
+            <Label x:Name="process_label" 
+                Content="Select Process" 
+                Padding="0" 
+                HorizontalContentAlignment="Center" 
+                VerticalContentAlignment="Center"
+                Foreground="White" 
+                Margin="0,0,225,0"
+            />
+            <ComboBox x:Name="process_list" 
+                Margin="90,5,4,5" 
+                VerticalAlignment="Center" 
+                SelectionChanged="Process_Selection_Changed"
+                ItemsSource="{Binding Apps}" 
+                DisplayMemberPath="Value.ProcessName" 
+                SelectedValuePath="Value.Id"
+            />
+        </Grid>
+
+    </Grid>
+</Window>
