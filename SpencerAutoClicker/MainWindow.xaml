@@ -7,12 +7,13 @@
         mc:Ignorable="d"
         Loaded="Window_Loaded"
         Title="Spencer Auto Clicker" Height="500" Width="335" 
-        MinHeight="500" MinWidth="335" ResizeMode="CanResizeWithGrip" Icon="/WindowIcon.png">
+        MinHeight="500" MinWidth="335" ResizeMode="CanResize" Icon="/WindowIcon.png">
     <Grid Background="#FF2F3542" Margin="0,0,0,1" HorizontalAlignment="Stretch">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Grid x:Name="process_container" HorizontalAlignment="Center" VerticalAlignment="Top" FlowDirection="LeftToRight" 
+        <Grid x:Name="process_container" HorizontalAlignment="Center" 
+              VerticalAlignment="Top" FlowDirection="LeftToRight" 
               Height="40" MinWidth="300" Margin="10,10,10,0">
             <Label x:Name="process_label" 
                 Content="Select Process" 
@@ -24,6 +25,7 @@
             />
             <ComboBox x:Name="process_list" 
                 Margin="90,5,4,5" 
+                PreviewMouseDown="Process_List_PreviewMouseDown"
                 VerticalAlignment="Center" 
                 SelectionChanged="Process_Selection_Changed"
             />
@@ -68,8 +70,7 @@
         </Grid>
         <Grid Height="40" VerticalAlignment="Bottom" Margin="5,0,5,5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition MinWidth="150"/>
-                <ColumnDefinition MinWidth="150"/>
+                <ColumnDefinition MinWidth="300"/>
             </Grid.ColumnDefinitions>
             <Button 
                 x:Name="clicker_button"
@@ -77,7 +78,7 @@
                 BorderBrush="Transparent"
                 Content="Start Clicker"
                 Height="30" 
-                Margin="2.5,0,7.5,0" 
+                Margin="2.5,0,2.5,0" 
                 FontWeight="Bold"
                 Click="Clicker_Handler"
             />

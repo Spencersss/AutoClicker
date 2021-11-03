@@ -30,48 +30,55 @@ namespace SpencerAutoClicker
             new SolidColorBrush(Color.FromRgb(255, 107, 129));
 
         // Fields
-        public static Dictionary<int, Process> Apps;
+        public static SortedDictionary<string, Process> Apps;
         private Clicker _clicker;
 
         // Constructor
         public MainWindow()
         {
             InitializeComponent();
-            Apps = new Dictionary<int, Process>();
+            Apps = new SortedDictionary<string, Process>();
             _clicker = new Clicker();
 
             // Init button text
             clicker_button.Content = "Start Clicker (" + _clicker.Hotkey_Mouse_Click + ")";
         }
 
+        // Helper for populating processes
+        private void addProcess(Process proc)
+        {
+            if ((int)proc.MainWindowHandle != 0 && proc.MainWindowTitle.Length > 0
+                && !Apps.ContainsKey(proc.MainWindowTitle))
+            {
+                Apps.Add(proc.MainWindowTitle, proc);
+            }
+        }
+
         // Methods
         private void populateProcesses()
         {
             // Populate Processes
+            Apps = new SortedDictionary<string, Process>();
             List<Process> processes = Enumerable.ToList(Process.GetProcesses());
             foreach (Process proc in processes)
             {
-                if ((int)proc.MainWindowHandle != 0)
-                {
-                    Apps.Add(proc.Id, proc);
-                }
+                addProcess(proc);
             }
+        }
 
+        private void setupProcessDataBinding()
+        {
             // Setup one way data binding
             process_list.ItemsSource = Apps;
-            process_list.SelectedValuePath = "Value.Id";
-            process_list.DisplayMemberPath = "Value.ProcessName";
+            process_list.SelectedValuePath = "Value.MainWindowTitle";
+            process_list.DisplayMemberPath = "Value.MainWindowTitle";
         }
 
         // Returns whether or not a key is numeric
-        public bool isDigit(Key key)
+        public bool IsDigit(Key key)
         {
             int keyVal = (int)key;
-            if ((keyVal > 33 && keyVal < 44) || (keyVal > 73 && keyVal < 84))
-            {
-                return true;
-            }
-            return false;
+            return (keyVal > 33 && keyVal < 44) || (keyVal > 73 && keyVal < 84);
         }
 
         // Event Handlers
@@ -90,6 +97,7 @@ namespace SpencerAutoClicker
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             populateProcesses();
+            setupProcessDataBinding();
         }
 
         private void Clicker_Handler(object sender, RoutedEventArgs e)
@@ -122,7 +130,16 @@ namespace SpencerAutoClicker
 
         private void Click_Interval_KeyDown(object sender, KeyEventArgs e)
         {
-            e.Handled = !isDigit(e.Key) || ((click_interval.Text.Length + 1) > 9);
+            e.Handled = !IsDigit(e.Key) || ((click_interval.Text.Length + 1) > 9);
+        }
+
+        private void Process_List_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!process_list.IsDropDownOpen)
+            {
+                populateProcesses();
+                setupProcessDataBinding();
+            }
         }
     }
 }

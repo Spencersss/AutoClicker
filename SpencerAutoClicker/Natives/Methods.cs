@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Input;
 
-namespace SpencerAutoClicker
+namespace Natives
 {
-    static class Natives
+    class NativeMethods
     {
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr SetFocus(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
+
         [DllImport("user32.dll")]
         public static extern IntPtr GetKeyboardLayout(uint idThread);
 
@@ -25,31 +30,5 @@ namespace SpencerAutoClicker
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool GetWindowRect(IntPtr hWnd, ref Rect Rect);
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Rect
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct Input
-        {
-            internal uint type;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct MouseInput
-        {
-            internal long X;
-            internal long Y;
-            internal uint MouseData;
-            internal uint Flags;
-            internal uint Time;
-            internal UIntPtr ExtraInfo;
-        }
     }
 }
