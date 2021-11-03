@@ -4,14 +4,15 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="apathyclan.png" />
+    <None Remove="WindowIcon.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="apathyclan.png" />
+    <Resource Include="WindowIcon.png" />
   </ItemGroup>
 
 </Project>

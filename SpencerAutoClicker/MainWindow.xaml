@@ -5,15 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpencerAutoClicker"
         mc:Ignorable="d"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Loaded="Window_Loaded"
         Title="Spencer Auto Clicker" Height="500" Width="335" 
-        MinHeight="500" MinWidth="335" ResizeMode="CanResizeWithGrip" Icon="/apathyclan.png" Loaded="Window_Loaded">
+        MinHeight="500" MinWidth="335" ResizeMode="CanResizeWithGrip" Icon="/WindowIcon.png">
     <Grid Background="#FF2F3542" Margin="0,0,0,1" HorizontalAlignment="Stretch">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid x:Name="process_container" HorizontalAlignment="Center" VerticalAlignment="Top" FlowDirection="LeftToRight" 
-              Height="40" Margin="10,10,10,0">
+              Height="40" MinWidth="300" Margin="10,10,10,0">
             <Label x:Name="process_label" 
                 Content="Select Process" 
                 Padding="0" 
@@ -26,11 +26,61 @@
                 Margin="90,5,4,5" 
                 VerticalAlignment="Center" 
                 SelectionChanged="Process_Selection_Changed"
-                ItemsSource="{Binding Apps}" 
-                DisplayMemberPath="Value.ProcessName" 
-                SelectedValuePath="Value.Id"
             />
         </Grid>
-
+        <Separator VerticalAlignment="Top" Margin="5,60,5,5" Background="#FF57606F"/>
+        <Grid x:Name="settings" HorizontalAlignment="Center" VerticalAlignment="Top" 
+            Height="100" 
+            MinWidth="300" 
+            Margin="0,71,0,0"
+         >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="180" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" x:Name="setting_click_interval" 
+                Content="Click Interval (ms)" 
+                Padding="0" 
+                Height="40"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                HorizontalContentAlignment="Center" 
+                VerticalContentAlignment="Center"
+                Foreground="White" 
+            />
+            <TextBox 
+                x:Name="click_interval"
+                Grid.Row="0" 
+                Grid.Column="1" 
+                Height="25" 
+                VerticalAlignment="Center"
+                VerticalContentAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Margin="0,0,5,0"
+                TextChanged="Click_Interval_TextChanged"
+                KeyDown="Click_Interval_KeyDown"
+            >
+                
+            </TextBox>
+        </Grid>
+        <Grid Height="40" VerticalAlignment="Bottom" Margin="5,0,5,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition MinWidth="150"/>
+                <ColumnDefinition MinWidth="150"/>
+            </Grid.ColumnDefinitions>
+            <Button 
+                x:Name="clicker_button"
+                Background="#7bed9f"
+                BorderBrush="Transparent"
+                Content="Start Clicker"
+                Height="30" 
+                Margin="2.5,0,7.5,0" 
+                FontWeight="Bold"
+                Click="Clicker_Handler"
+            />
+        </Grid>
     </Grid>
 </Window>
