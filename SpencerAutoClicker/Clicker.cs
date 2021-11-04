@@ -76,7 +76,8 @@ namespace SpencerAutoClicker
             return lParams;
         }
 
-        private void ClickerHoldDownLeft()
+        // true = up, false = down
+        private void ClickerHoldDown(bool upOrDown)
         {
             IntPtr procWindow = NativeMethods.FindWindow(null, ProcessWindowTitle);
             Rect winRectangle = new Rect();
@@ -86,7 +87,14 @@ namespace SpencerAutoClicker
             {
                 int x = (winRectangle.Right - winRectangle.Left) / 2;
                 int y = (winRectangle.Bottom - winRectangle.Top) / 2;
-                NativeMethods.PostMessage(procWindow, 0x201, 0x1, GenLParams(x, y));
+                if (upOrDown)
+                {
+                    NativeMethods.PostMessage(procWindow, 0x202, 0, GenLParams(x, y));
+                }
+                else
+                {
+                    NativeMethods.PostMessage(procWindow, 0x201, 0x1, GenLParams(x, y));
+                }
             }
         }
 
@@ -134,6 +142,7 @@ namespace SpencerAutoClicker
             if (!HoldDownRunning && CurrentProcess != null)
             {
                 HoldDownRunning = true;
+                ClickerHoldDown(false);
             }
         }
 
@@ -142,6 +151,7 @@ namespace SpencerAutoClicker
             if (HoldDownRunning)
             {
                 HoldDownRunning = false;
+                ClickerHoldDown(true);
             }
         }
 

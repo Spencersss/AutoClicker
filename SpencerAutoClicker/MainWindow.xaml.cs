@@ -92,13 +92,14 @@ namespace SpencerAutoClicker
             click_interval.Text = _clicker.ClickInterval.ToString();
         }
 
-        private void Clicker_Handler(object sender, RoutedEventArgs e)
+        // If bad input entered for interval, set to minimum value.
+        private void VerifyInterval()
         {
             if (click_interval.Text.Length <= 0)
             {
                 click_interval.Text = "20";
                 _clicker.ClickInterval = 20;
-            } 
+            }
             else
             {
                 int currentInterval = int.Parse(click_interval.Text);
@@ -108,23 +109,76 @@ namespace SpencerAutoClicker
                     _clicker.ClickInterval = 20;
                 }
             }
+        }
 
-            if (_clicker.ClickerRunning)
+        private void SetClickerButtonState(bool state)
+        {
+            if (state)
             {
-                click_interval.IsReadOnly = false;
-                _clicker.StopClicker();
                 clicker_button.Content = "Start Clicker (" + _clicker.Hotkey_Mouse_Click + ")";
                 clicker_button.Background = StartColor;
+            } 
+            else
+            {
+                clicker_button.Content = "Stop Clicker (" + _clicker.Hotkey_Mouse_Click + ")";
+                clicker_button.Background = StopColor;
+            }
+            
+        }
+
+        private void HandleClickDown()
+        {
+            if (_clicker.HoldDownRunning)
+            {
+                click_interval.IsReadOnly = false;
+                hold_mode.IsEnabled = true;
+                _clicker.StopMouseDown();
+                SetClickerButtonState(true);
             }
             else
             {
                 if (_clicker.IsProcessSelected())
                 {
                     click_interval.IsReadOnly = true;
-                    _clicker.StartClicker();
-                    clicker_button.Content = "Stop Clicker (" + _clicker.Hotkey_Mouse_Click + ")";
-                    clicker_button.Background = StopColor;
+                    hold_mode.IsEnabled = false;
+                    _clicker.StartMouseDown();
+                    SetClickerButtonState(false);
                 }
+            }
+        }
+
+        private void HandleClickerAuto()
+        {
+            if (_clicker.ClickerRunning)
+            {
+                click_interval.IsReadOnly = false;
+                hold_mode.IsEnabled = true;
+                _clicker.StopClicker();
+                SetClickerButtonState(true);
+            }
+            else
+            {
+                if (_clicker.IsProcessSelected())
+                {
+                    click_interval.IsReadOnly = true;
+                    hold_mode.IsEnabled = false;
+                    _clicker.StartClicker();
+                    SetClickerButtonState(false);
+                }
+            }
+        }
+
+        private void Clicker_Handler(object sender, RoutedEventArgs e)
+        {
+            VerifyInterval();
+
+            if (hold_mode.IsChecked.Value)
+            {
+                HandleClickDown();
+            }
+            else
+            {
+                HandleClickerAuto();
             }
         }
 

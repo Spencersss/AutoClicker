@@ -46,6 +46,7 @@
          >
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="120" />
@@ -72,9 +73,29 @@
                 Margin="0,0,5,0"
                 TextChanged="Click_Interval_TextChanged"
                 PreviewKeyDown="Click_Interval_KeyDown"
-            >
-                
-            </TextBox>
+            />
+            <Label Grid.Row="1" Grid.Column="0"
+                Content="Hold Left Click Mode" 
+                Padding="0" 
+                Height="40"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                HorizontalContentAlignment="Center" 
+                VerticalContentAlignment="Center"
+                Foreground="White" 
+            />
+            <CheckBox 
+                Grid.Row="1" 
+                Grid.Column="1" 
+                VerticalAlignment="Center"
+                HorizontalAlignment="Right"
+                Margin="0,0,5,0"
+                x:Name="hold_mode"
+             >
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                </CheckBox.LayoutTransform>
+            </CheckBox>
         </Grid>
         <Separator Grid.Row="3" 
                 VerticalAlignment="Center" 
