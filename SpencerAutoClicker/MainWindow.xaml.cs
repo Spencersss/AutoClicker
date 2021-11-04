@@ -1,20 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace SpencerAutoClicker
 {
@@ -86,9 +77,9 @@ namespace SpencerAutoClicker
         {
             if (e.AddedItems != null && e.AddedItems.Count > 0)
             {
-                if (e.AddedItems[0].GetType() == typeof(KeyValuePair<int, Process>))
+                if (e.AddedItems[0].GetType() == typeof(KeyValuePair<string, Process>))
                 {
-                    KeyValuePair<int, Process> addedItem = (KeyValuePair<int, Process>)e.AddedItems[0];
+                    KeyValuePair<string, Process> addedItem = (KeyValuePair<string, Process>)e.AddedItems[0];
                     _clicker.SetProcess(addedItem.Value);
                 }
             }
@@ -98,12 +89,29 @@ namespace SpencerAutoClicker
         {
             populateProcesses();
             setupProcessDataBinding();
+            click_interval.Text = _clicker.ClickInterval.ToString();
         }
 
         private void Clicker_Handler(object sender, RoutedEventArgs e)
         {
+            if (click_interval.Text.Length <= 0)
+            {
+                click_interval.Text = "20";
+                _clicker.ClickInterval = 20;
+            } 
+            else
+            {
+                int currentInterval = int.Parse(click_interval.Text);
+                if (click_interval.Text.Length <= 2 && currentInterval < 20)
+                {
+                    click_interval.Text = "20";
+                    _clicker.ClickInterval = 20;
+                }
+            }
+
             if (_clicker.ClickerRunning)
             {
+                click_interval.IsReadOnly = false;
                 _clicker.StopClicker();
                 clicker_button.Content = "Start Clicker (" + _clicker.Hotkey_Mouse_Click + ")";
                 clicker_button.Background = StartColor;
@@ -112,6 +120,7 @@ namespace SpencerAutoClicker
             {
                 if (_clicker.IsProcessSelected())
                 {
+                    click_interval.IsReadOnly = true;
                     _clicker.StartClicker();
                     clicker_button.Content = "Stop Clicker (" + _clicker.Hotkey_Mouse_Click + ")";
                     clicker_button.Background = StopColor;
@@ -130,7 +139,25 @@ namespace SpencerAutoClicker
 
         private void Click_Interval_KeyDown(object sender, KeyEventArgs e)
         {
-            e.Handled = !IsDigit(e.Key) || ((click_interval.Text.Length + 1) > 9);
+            if (e.Key != Key.Back)
+            {
+                if (IsDigit(e.Key))
+                {
+                    if (click_interval.Text.Length > 0)
+                    {
+                        int newClickInterval = int.Parse(click_interval.Text);
+                        e.Handled = newClickInterval > int.MaxValue;
+                    }
+                }
+                else
+                {
+                    e.Handled = true;
+                }
+            }
+            else
+            {
+                e.Handled = false;
+            }
         }
 
         private void Process_List_PreviewMouseDown(object sender, MouseButtonEventArgs e)

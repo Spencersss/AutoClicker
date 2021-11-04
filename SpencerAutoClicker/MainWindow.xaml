@@ -8,13 +8,21 @@
         Loaded="Window_Loaded"
         Title="Spencer Auto Clicker" Height="500" Width="335" 
         MinHeight="500" MinWidth="335" ResizeMode="CanResize" Icon="/WindowIcon.png">
-    <Grid Background="#FF2F3542" Margin="0,0,0,1" HorizontalAlignment="Stretch">
+    <Grid Background="#FF2F3542" Margin="0,0,0,0" HorizontalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition x:Name="separator_1" Height="20"/>
+            <RowDefinition MinHeight="40"/>
+            <RowDefinition x:Name="separator_2" Height="20"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Grid x:Name="process_container" HorizontalAlignment="Center" 
-              VerticalAlignment="Top" FlowDirection="LeftToRight" 
-              Height="40" MinWidth="300" Margin="10,10,10,0">
+        <Grid Grid.Row="0" x:Name="process_container" HorizontalAlignment="Center" 
+              VerticalAlignment="Bottom" 
+              MinWidth="300" 
+              Margin="5,10,5,0">
             <Label x:Name="process_label" 
                 Content="Select Process" 
                 Padding="0" 
@@ -30,11 +38,11 @@
                 SelectionChanged="Process_Selection_Changed"
             />
         </Grid>
-        <Separator VerticalAlignment="Top" Margin="5,60,5,5" Background="#FF57606F"/>
-        <Grid x:Name="settings" HorizontalAlignment="Center" VerticalAlignment="Top" 
-            Height="100" 
+        <Separator Grid.Row="1" VerticalAlignment="Center" Margin="5,5,5,0" Background="#FF57606F"/>
+        <Grid Grid.Row="2" x:Name="settings" HorizontalAlignment="Center" 
+            VerticalAlignment="Top" 
             MinWidth="300" 
-            Margin="0,71,0,0"
+            Margin="0,0,0,0"
          >
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
@@ -57,18 +65,22 @@
                 x:Name="click_interval"
                 Grid.Row="0" 
                 Grid.Column="1" 
-                Height="25" 
+                Height="20" 
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
                 HorizontalContentAlignment="Center"
                 Margin="0,0,5,0"
                 TextChanged="Click_Interval_TextChanged"
-                KeyDown="Click_Interval_KeyDown"
+                PreviewKeyDown="Click_Interval_KeyDown"
             >
                 
             </TextBox>
         </Grid>
-        <Grid Height="40" VerticalAlignment="Bottom" Margin="5,0,5,5">
+        <Separator Grid.Row="3" 
+                VerticalAlignment="Center" 
+                Margin="5,0,5,0" 
+                Background="#FF57606F"/>
+        <Grid Grid.Row="4" VerticalAlignment="Top" Margin="5,0,5,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition MinWidth="300"/>
             </Grid.ColumnDefinitions>
@@ -78,7 +90,7 @@
                 BorderBrush="Transparent"
                 Content="Start Clicker"
                 Height="30" 
-                Margin="2.5,0,2.5,0" 
+                Margin="5,0,5,0" 
                 FontWeight="Bold"
                 Click="Clicker_Handler"
             />

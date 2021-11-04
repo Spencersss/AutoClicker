@@ -41,7 +41,7 @@ namespace SpencerAutoClicker
             // Init vals
             Hotkey_Mouse_Click = Key.F9;
             Hotkey_Mouse_Down = Key.F10;
-            ClickInterval = 100;
+            ClickInterval = 50;
             ClickerRunning = false;
             HoldDownRunning = false;
             ControlLoopThread = null;
@@ -76,9 +76,22 @@ namespace SpencerAutoClicker
             return lParams;
         }
 
+        private void ClickerHoldDownLeft()
+        {
+            IntPtr procWindow = NativeMethods.FindWindow(null, ProcessWindowTitle);
+            Rect winRectangle = new Rect();
+            bool gotRectangle = NativeMethods.GetWindowRect(procWindow, ref winRectangle);
+
+            if (gotRectangle)
+            {
+                int x = (winRectangle.Right - winRectangle.Left) / 2;
+                int y = (winRectangle.Bottom - winRectangle.Top) / 2;
+                NativeMethods.PostMessage(procWindow, 0x201, 0x1, GenLParams(x, y));
+            }
+        }
+
         private void ClickerControlLoop()
         {
-            IntPtr currentForegroundWindow = NativeMethods.GetForegroundWindow();
             IntPtr procWindow = NativeMethods.FindWindow(null, ProcessWindowTitle);
             Rect winRectangle = new Rect();
             bool gotRectangle = NativeMethods.GetWindowRect(procWindow, ref winRectangle);
@@ -89,13 +102,9 @@ namespace SpencerAutoClicker
                 int y = (winRectangle.Bottom - winRectangle.Top) / 2;
                 while (ClickerRunning)
                 {
-                    //NativeMethods.SetFocus(procWindow);
-                    NativeMethods.PostMessage(procWindow, 0x200, 0, GenLParams(x, y));
                     NativeMethods.PostMessage(procWindow, 0x201, 0x1, GenLParams(x, y));
                     Thread.Sleep(10);
-                    NativeMethods.PostMessage(procWindow, 0x200, 0, GenLParams(x, y));
                     NativeMethods.PostMessage(procWindow, 0x202, 0, GenLParams(x, y));
-                    //NativeMethods.SetFocus(currentForegroundWindow);
                     Thread.Sleep(ClickInterval);
                 }
             }
