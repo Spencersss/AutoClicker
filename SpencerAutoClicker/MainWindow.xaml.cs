@@ -1,7 +1,10 @@
-﻿using System;
+﻿using SharpHook;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -33,6 +36,9 @@ namespace SpencerAutoClicker
 
             // Init button text
             clicker_button.Content = "Start Clicker (" + _clicker.Hotkey_Mouse_Click + ")";
+
+            // Init hotkey binding 
+            ClickerHotkeyHook hotkeyHook = new(Clicker_Handler);
         }
 
         // Helper for populating processes

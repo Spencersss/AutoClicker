@@ -40,7 +40,6 @@ namespace SpencerAutoClicker
         {
             // Init vals
             Hotkey_Mouse_Click = Key.F9;
-            Hotkey_Mouse_Down = Key.F10;
             ClickInterval = 50;
             ClickerRunning = false;
             HoldDownRunning = false;
