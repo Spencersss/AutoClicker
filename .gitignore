@@ -6,6 +6,9 @@
 *.user
 *.sln.docstates
 
+# VS foler
+.vs/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
