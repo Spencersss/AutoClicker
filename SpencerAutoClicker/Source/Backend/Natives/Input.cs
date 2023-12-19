@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Natives
+namespace SpencerAutoClicker.Source.Backend.Natives
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct Rect
+    internal struct Input
     {
-        public int Left;
-        public int Top;
-        public int Right;
-        public int Bottom;
+        internal uint type;
     }
 }

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace SpencerAutoClicker.Interface
+namespace SpencerAutoClicker.Source.Frontend.Controls
 {
     /// <summary>
     /// Interaction logic for HotkeySetting.xaml

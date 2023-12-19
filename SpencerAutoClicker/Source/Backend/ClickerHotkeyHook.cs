@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace SpencerAutoClicker
+namespace SpencerAutoClicker.Source.Backend
 {
     public class ClickerHotkeyHook
     {
@@ -14,7 +14,7 @@ namespace SpencerAutoClicker
         private SynchronizationContext synchronizationContext;
 
         public ClickerHotkeyHook(Action<object, RoutedEventArgs> action)
-        { 
+        {
             _action = action;
             synchronizationContext = SynchronizationContext.Current;
 

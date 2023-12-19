@@ -10,6 +10,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>embedded</DebugType>
+    <Optimize>False</Optimize>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -18,6 +19,10 @@
 
   <ItemGroup>
     <None Remove="WindowIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="Source\Frontend\App.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +36,16 @@
   <ItemGroup>
     <PackageReference Include="SharpHook" Version="5.1.1" />
     <PackageReference Include="SharpHook.Reactive" Version="5.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Interface\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ApplicationDefinition Update="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
   </ItemGroup>
 
 </Project>

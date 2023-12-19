@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="SpencerAutoClicker.Interface.HotkeySetting"
+﻿<UserControl x:Class="SpencerAutoClicker.Source.Frontend.Controls.HotkeySetting"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,13 +6,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="20" d:DesignWidth="100">
     <Grid>
-        <TextBox />
-        <TextBlock
+        <TextBox 
+            Text="Set hotkey"
             Height="20"
             Width="100"
-            Text="Set hotkey"
-            TextAlignment="Center"
-            Foreground="Black"/>
+            HorizontalContentAlignment="Center"/>
     </Grid>
     
 </UserControl>

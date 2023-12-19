@@ -1,4 +1,5 @@
 ﻿using SharpHook;
+using SpencerAutoClicker.Source.Backend;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace SpencerAutoClicker
+namespace SpencerAutoClicker.Source.Frontend
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -18,7 +19,7 @@ namespace SpencerAutoClicker
     public partial class MainWindow : Window
     {
         // Colors
-        public readonly SolidColorBrush StartColor = 
+        public readonly SolidColorBrush StartColor =
             new SolidColorBrush(Color.FromRgb(123, 237, 159));
         public readonly SolidColorBrush StopColor =
             new SolidColorBrush(Color.FromRgb(255, 107, 129));
@@ -56,7 +57,7 @@ namespace SpencerAutoClicker
         {
             // Populate Processes
             Apps = new SortedDictionary<string, Process>();
-            List<Process> processes = Enumerable.ToList(Process.GetProcesses());
+            List<Process> processes = Process.GetProcesses().ToList();
             foreach (Process proc in processes)
             {
                 addProcess(proc);
@@ -75,7 +76,7 @@ namespace SpencerAutoClicker
         public bool IsDigit(Key key)
         {
             int keyVal = (int)key;
-            return (keyVal > 33 && keyVal < 44) || (keyVal > 73 && keyVal < 84);
+            return keyVal > 33 && keyVal < 44 || keyVal > 73 && keyVal < 84;
         }
 
         // If bad input entered for interval, set to minimum value.

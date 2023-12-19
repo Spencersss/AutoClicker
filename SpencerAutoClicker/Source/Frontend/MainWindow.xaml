@@ -1,9 +1,9 @@
-﻿<Window x:Class="SpencerAutoClicker.MainWindow"
+﻿<Window x:Class="SpencerAutoClicker.Source.Frontend.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-        xmlns:interface="clr-namespace:SpencerAutoClicker.Interface"
+        xmlns:controls="clr-namespace:SpencerAutoClicker.Source.Frontend.Controls"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
         Title="Spencer Auto Clicker" Height="500" Width="335" 
@@ -99,7 +99,7 @@
                 HorizontalContentAlignment="Center" 
                 VerticalContentAlignment="Center"
                 Foreground="White" />
-            <interface:HotkeySetting 
+            <controls:HotkeySetting
                 Grid.Row="2" 
                 Grid.Column="1"
                 Height="20"

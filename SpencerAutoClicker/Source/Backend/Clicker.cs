@@ -1,5 +1,4 @@
 ﻿using System;
-using Natives;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -7,8 +6,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using SpencerAutoClicker.Source.Backend.Natives;
 
-namespace SpencerAutoClicker
+namespace SpencerAutoClicker.Source.Backend
 {
     public class Clicker
     {
@@ -71,7 +71,7 @@ namespace SpencerAutoClicker
         public uint GenLParams(int x, int y)
         {
             uint lParams = 0x000000000;
-            lParams |= (uint)((y << 16) | (x & 0xFFFF));
+            lParams |= (uint)(y << 16 | x & 0xFFFF);
             return lParams;
         }
 

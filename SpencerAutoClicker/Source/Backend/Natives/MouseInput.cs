@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Natives
+namespace SpencerAutoClicker.Source.Backend.Natives
 {
     [StructLayout(LayoutKind.Sequential)]
     internal struct MouseInput
