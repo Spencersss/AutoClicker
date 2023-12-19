@@ -24,9 +24,10 @@ namespace SpencerAutoClicker.Source.Frontend
         public readonly SolidColorBrush StopColor =
             new SolidColorBrush(Color.FromRgb(255, 107, 129));
 
-        // Fields
+        // Vars
         public static SortedDictionary<string, Process> Apps;
         private Clicker _clicker;
+        private ClickerHotkeyHook _hotkeyHook;
 
         // Constructor
         public MainWindow()
@@ -39,7 +40,7 @@ namespace SpencerAutoClicker.Source.Frontend
             clicker_button.Content = "Start Clicker (" + _clicker.Hotkey_Mouse_Click + ")";
 
             // Init hotkey binding 
-            ClickerHotkeyHook hotkeyHook = new(Clicker_Handler);
+            _hotkeyHook = new(Clicker_Handler);
         }
 
         // Helper for populating processes
@@ -138,6 +139,13 @@ namespace SpencerAutoClicker.Source.Frontend
             populateProcesses();
             setupProcessDataBinding();
             click_interval.Text = _clicker.ClickInterval.ToString();
+        }
+
+        // Cleanup when clicker window is closed
+        private void OnWindowClose(object sender, EventArgs e)
+        {
+            _hotkeyHook.CleanupActiveHooks();
+            Environment.Exit(Environment.ExitCode);
         }
 
         private void HandleClickDown()

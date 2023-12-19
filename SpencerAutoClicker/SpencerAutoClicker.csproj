@@ -6,6 +6,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Images\AppIcon.ico</ApplicationIcon>
     <StartupObject>SpencerAutoClicker.App</StartupObject>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -36,10 +37,6 @@
   <ItemGroup>
     <PackageReference Include="SharpHook" Version="5.1.1" />
     <PackageReference Include="SharpHook.Reactive" Version="5.1.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Interface\" />
   </ItemGroup>
 
   <ItemGroup>

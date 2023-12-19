@@ -6,6 +6,7 @@
         xmlns:controls="clr-namespace:SpencerAutoClicker.Source.Frontend.Controls"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
+        Closing="OnWindowClose"
         Title="Spencer Auto Clicker" Height="500" Width="335" 
         MinHeight="500" MinWidth="335" ResizeMode="CanResize" Icon="/Images/WindowIcon.png">
     <Grid Background="#FF2F3542" Margin="0,0,0,0" HorizontalAlignment="Stretch">
@@ -99,7 +100,7 @@
                 HorizontalContentAlignment="Center" 
                 VerticalContentAlignment="Center"
                 Foreground="White" />
-            <controls:HotkeySetting
+            <controls:InputSetting
                 Grid.Row="2" 
                 Grid.Column="1"
                 Height="20"
