@@ -21,7 +21,11 @@ namespace SpencerAutoClicker.Source.Backend
             _action = action;
             synchronizationContext = SynchronizationContext.Current;
 
-            hook = new SimpleGlobalHook();
+            if (hook == null)
+            {
+                hook = new SimpleGlobalHook();
+            }
+            
             hook.KeyPressed += (sender, e) =>
             {
                 synchronizationContext.Post(new SendOrPostCallback((obj) =>

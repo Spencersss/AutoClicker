@@ -13,11 +13,11 @@
             VerticalAlignment="Center"
             IsReadOnly="True"/>
         <TextBlock 
-            Text="{Binding Path=ControlText}"
+            Text="{Binding Path=ControlText, UpdateSourceTrigger=PropertyChanged}"
             Height="20"
             Width="100"
             Margin="0 3 0 0"
-            KeyDown="OnKeyDown"
+            MouseLeftButtonDown="OnMouseLeftDown"
             TextAlignment="Center"
             VerticalAlignment="Center"
             HorizontalAlignment="Center"/>
