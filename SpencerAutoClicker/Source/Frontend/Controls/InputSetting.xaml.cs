@@ -112,10 +112,6 @@ namespace SpencerAutoClicker.Source.Frontend.Controls
         {
             if (_isWaitingForInput)
             {
-                // Unhook event handlers for mouse and key input
-                _hookManager.Hook.MousePressed -= OnMousePressed;
-                _hookManager.Hook.KeyPressed -= OnKeyPressed;
-
                 string oldControlText = ControlText;
                 // Update internal input value and text
                 if (inputType == InputType.Keyboard)
@@ -129,16 +125,28 @@ namespace SpencerAutoClicker.Source.Frontend.Controls
                 // Set clicker hotkey with new input value
                 try
                 {
-                    ClickerSettings.Hotkey = new Hotkey(inputValue);
+                    Hotkey newHotkey = new(inputValue);
+                    if (newHotkey.Type == InputType.Mouse && newHotkey.GetMouseButton() == SharpHook.Native.MouseButton.Button1)
+                    {
+                        Trace.WriteLine("MouseButton1 not allowed for hotkey!");
+                        ControlText = oldControlText;
+                    }
+                    else
+                    {
+                        // Unhook event handlers for mouse and key input
+                        _hookManager.Hook.MousePressed -= OnMousePressed;
+                        _hookManager.Hook.KeyPressed -= OnKeyPressed;
+                        ClickerSettings.Hotkey = newHotkey;
+
+                        // Signal that we are no longer waiting for input
+                        _isWaitingForInput = false;
+                    }
+                    
                 } catch (InputNotFoundException)
                 {
                     Trace.WriteLine("Unknown input value provided, reverting control text");
                     ControlText = oldControlText;
                 }
-                
-
-                // Signal that we are no longer waiting for input
-                _isWaitingForInput = false;
             }
         }
 
