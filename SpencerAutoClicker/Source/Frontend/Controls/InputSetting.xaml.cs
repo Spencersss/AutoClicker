@@ -15,8 +15,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Ninject;
 using SharpHook;
 using SharpHook.Native;
+using SpencerAutoClicker.Source.Backend;
+using SpencerAutoClicker.Source.Backend.Exceptions;
+using SpencerAutoClicker.Source.Backend.Helpers;
 
 namespace SpencerAutoClicker.Source.Frontend.Controls
 {
@@ -27,21 +31,27 @@ namespace SpencerAutoClicker.Source.Frontend.Controls
     /// </summary>
     public partial class InputSetting : UserControl, INotifyPropertyChanged
     {
-        // Enums
-        private enum InputType
-        {
-            Mouse,
-            Keyboard
-        }
-
         // Events
         public event PropertyChangedEventHandler PropertyChanged;
 
         // Vars
-        private SimpleGlobalHook hook;
         private const string _defaultControlText = "Set";
         private string _controlText = "";
-        private string _currentInput = "";
+        private HookManager _hookManager;
+
+        // State vars
+        public bool CanClick = true;
+
+        // Properties
+        [Inject]
+        public HookManager HookManager
+        {
+            get => _hookManager;
+            set
+            {
+                _hookManager = value;
+            }
+        }
 
         public string ControlText
         {
@@ -62,25 +72,27 @@ namespace SpencerAutoClicker.Source.Frontend.Controls
             InitializeComponent();
             DataContext = this;
             ControlText = _defaultControlText;
-            hook = new SimpleGlobalHook();
+
+            // Inject ninject fields
+            NinjectHelper.Kernel.Inject(this);
         }
 
         // Event Handlers
         public void OnMouseLeftDown(object sender, MouseButtonEventArgs e)
         {
-            if (!_isWaitingForInput)
+            if (!_isWaitingForInput && MainWindow.InputsEnabled)
             {
                 _isWaitingForInput = true;
 
                 ControlText = "Select key..";
 
                 // listen for mouse and keyboard events
-                hook.MousePressed += OnMousePressed;
-                hook.KeyPressed += OnKeyPressed;
+                _hookManager.Hook.MousePressed += OnMousePressed;
+                _hookManager.Hook.KeyPressed += OnKeyPressed;
 
-                if (hook !=  null && !hook.IsRunning)
+                if (_hookManager.Hook !=  null && !_hookManager.Hook.IsRunning)
                 {
-                    hook.RunAsync();
+                    _hookManager.Hook.RunAsync();
                 }
             }
         }
@@ -101,10 +113,10 @@ namespace SpencerAutoClicker.Source.Frontend.Controls
             if (_isWaitingForInput)
             {
                 // Unhook event handlers for mouse and key input
-                hook.MousePressed -= OnMousePressed;
-                hook.KeyPressed -= OnKeyPressed;
+                _hookManager.Hook.MousePressed -= OnMousePressed;
+                _hookManager.Hook.KeyPressed -= OnKeyPressed;
 
-                
+                string oldControlText = ControlText;
                 // Update internal input value and text
                 if (inputType == InputType.Keyboard)
                 {
@@ -113,7 +125,17 @@ namespace SpencerAutoClicker.Source.Frontend.Controls
                 {
                     ControlText = inputValue;
                 }
-                _currentInput = inputValue;
+
+                // Set clicker hotkey with new input value
+                try
+                {
+                    ClickerSettings.Hotkey = new Hotkey(inputValue);
+                } catch (InputNotFoundException)
+                {
+                    Trace.WriteLine("Unknown input value provided, reverting control text");
+                    ControlText = oldControlText;
+                }
+                
 
                 // Signal that we are no longer waiting for input
                 _isWaitingForInput = false;

@@ -2,51 +2,42 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using SharpHook.Native;
 using SpencerAutoClicker.Source.Backend.Natives;
+using SpencerAutoClicker.Source.Frontend;
 
 namespace SpencerAutoClicker.Source.Backend
 {
     public class Clicker
     {
-        // Config
-        public Key Hotkey_Mouse_Click { get; set; } // key used to toggle clicker
-        public Key Hotkey_Mouse_Down { get; set; } // key used to toggle mouse down
-        public int ClickInterval { get; set; } // in milliseconds
-
         // States
         public bool ClickerRunning { get; set; } // left click running
-        public bool HoldDownRunning { get; set; } // hold left click
+        private Process CurrentProcess { get; set; } // current process clicker interacts with
         private Thread ControlLoopThread;
 
-        // Fields 
-        private Process CurrentProcess { get; set; } // current process clicker interacts with
-
-        // Property
+        // Properties
         public string ProcessWindowTitle => CurrentProcess.MainWindowTitle;
 
-        // Enums
-        public enum MouseButton
-        {
-            LeftDown = 0x201,
-            LeftUp = 0x202
-        }
+        // Constants
+        private const int MouseLeftDown = 0x201;
+        private const int MouseLeftUp = 0x202;
 
         // Constructor
         public Clicker()
         {
-            // Init vals
-            Hotkey_Mouse_Click = Key.F9;
-            ClickInterval = 50;
+            // Init state vals
             ClickerRunning = false;
-            HoldDownRunning = false;
-            ControlLoopThread = null;
             CurrentProcess = null;
+            ControlLoopThread = null;
         }
 
+        // Methods
         public void SetProcess(Process proc)
         {
             CurrentProcess = proc;
@@ -55,6 +46,11 @@ namespace SpencerAutoClicker.Source.Backend
         public Process GetProcess()
         {
             return CurrentProcess;
+        }
+
+        public bool IsProcessSelected()
+        {
+            return CurrentProcess != null;
         }
 
         /*
@@ -67,57 +63,49 @@ namespace SpencerAutoClicker.Source.Backend
             (uint)MouseButton.LeftUp, 0, NativeMethods.GetKeyboardLayout(0));
 
         */
-
-        public uint GenLParams(int x, int y)
+        private uint GenLParams(int x, int y)
         {
             uint lParams = 0x000000000;
             lParams |= (uint)(y << 16 | x & 0xFFFF);
             return lParams;
         }
 
-        // true = up, false = down
-        private void ClickerHoldDown(bool upOrDown)
-        {
-            IntPtr procWindow = NativeMethods.FindWindow(null, ProcessWindowTitle);
-            Rect winRectangle = new Rect();
-            bool gotRectangle = NativeMethods.GetWindowRect(procWindow, ref winRectangle);
-
-            if (gotRectangle)
-            {
-                int x = (winRectangle.Right - winRectangle.Left) / 2;
-                int y = (winRectangle.Bottom - winRectangle.Top) / 2;
-                if (upOrDown)
-                {
-                    NativeMethods.PostMessage(procWindow, 0x202, 0, GenLParams(x, y));
-                }
-                else
-                {
-                    NativeMethods.PostMessage(procWindow, 0x201, 0x1, GenLParams(x, y));
-                }
-            }
-        }
-
         private void ClickerControlLoop()
         {
             IntPtr procWindow = NativeMethods.FindWindow(null, ProcessWindowTitle);
-            Rect winRectangle = new Rect();
+            Natives.Rect winRectangle = new Natives.Rect();
             bool gotRectangle = NativeMethods.GetWindowRect(procWindow, ref winRectangle);
 
             if (gotRectangle)
             {
                 int x = (winRectangle.Right - winRectangle.Left) / 2;
                 int y = (winRectangle.Bottom - winRectangle.Top) / 2;
+
+                // When clicker starts and hold down left mode is enabled, send single mouse down to process
+                if (ClickerSettings.ShouldHoldDown)
+                {
+                    NativeMethods.PostMessage(procWindow, MouseLeftDown, 0x1, GenLParams(x, y));
+                }
+
                 while (ClickerRunning)
                 {
-                    NativeMethods.PostMessage(procWindow, 0x201, 0x1, GenLParams(x, y));
-                    Thread.Sleep(10);
-                    NativeMethods.PostMessage(procWindow, 0x202, 0, GenLParams(x, y));
-                    Thread.Sleep(ClickInterval);
+                    if (!ClickerSettings.ShouldHoldDown)
+                    {
+                        NativeMethods.PostMessage(procWindow, MouseLeftDown, 0x1, GenLParams(x, y));
+                        Thread.Sleep(10);
+                        NativeMethods.PostMessage(procWindow, MouseLeftUp, 0, GenLParams(x, y));
+                        Thread.Sleep(ClickerSettings.ClickInterval);
+                    }
+                }
+
+                // When clicker stops, send mouse up input if being held down
+                if (ClickerSettings.ShouldHoldDown)
+                {
+                    NativeMethods.PostMessage(procWindow, MouseLeftUp, 0, GenLParams(x, y));
                 }
             }
         }
 
-        // Methods
         public void StartClicker()
         {
             if (!ClickerRunning && CurrentProcess != null)
@@ -134,29 +122,6 @@ namespace SpencerAutoClicker.Source.Backend
             {
                 ClickerRunning = false;
             }
-        }
-
-        public void StartMouseDown()
-        {
-            if (!HoldDownRunning && CurrentProcess != null)
-            {
-                HoldDownRunning = true;
-                ClickerHoldDown(false);
-            }
-        }
-
-        public void StopMouseDown()
-        {
-            if (HoldDownRunning)
-            {
-                HoldDownRunning = false;
-                ClickerHoldDown(true);
-            }
-        }
-
-        public bool IsProcessSelected()
-        {
-            return CurrentProcess != null;
         }
 
     }

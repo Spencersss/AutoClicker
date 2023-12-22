@@ -1,11 +1,11 @@
-﻿using SharpHook;
+﻿using Ninject;
 using SpencerAutoClicker.Source.Backend;
+using SpencerAutoClicker.Source.Frontend.Controls;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -18,6 +18,10 @@ namespace SpencerAutoClicker.Source.Frontend
     /// </summary>
     public partial class MainWindow : Window
     {
+        // Clicker button texts
+        private const string START_CLICKER_BASE_STRING = "Start Clicker ({0})";
+        private const string STOP_CLICKER_BASE_STRING = "Stop Clicker ({0})";
+
         // Colors
         public readonly SolidColorBrush StartColor =
             new SolidColorBrush(Color.FromRgb(123, 237, 159));
@@ -26,25 +30,40 @@ namespace SpencerAutoClicker.Source.Frontend
 
         // Vars
         public static SortedDictionary<string, Process> Apps;
-        private Clicker _clicker;
-        private ClickerHotkeyHook _hotkeyHook;
+        private readonly Clicker _clicker;
+        private readonly HookManager _hotkeyHook;
+
+        // State vars
+        public static bool InputsEnabled { get; set; }
 
         // Constructor
-        public MainWindow()
+        public MainWindow(HookManager hookManager, IKernel kernel)
         {
+            DataContext = this;
             InitializeComponent();
+
+            _hotkeyHook = hookManager;
+            hotkeyConfig = kernel.Get<InputSetting>();
+            hotkeyConfig.Visibility = Visibility.Visible;
+
             Apps = new SortedDictionary<string, Process>();
-            _clicker = new Clicker();
+
+            // init state vars
+            InputsEnabled = true;
 
             // Init button text
-            clicker_button.Content = "Start Clicker (" + _clicker.Hotkey_Mouse_Click + ")";
+            clicker_button.Content = string.Format(START_CLICKER_BASE_STRING, ClickerSettings.Hotkey.ToString());
 
-            // Init hotkey binding 
-            _hotkeyHook = new(Clicker_Handler);
+            // Init private vars
+            _clicker = new Clicker();
+
+            // Setup event handlers
+            _hotkeyHook.OnHotkeyTriggered += OnHotkeyTriggered;
+            ClickerSettings.OnHotkeyChanged += OnHotkeyChanged;
         }
 
         // Helper for populating processes
-        private void addProcess(Process proc)
+        private void AddProcess(Process proc)
         {
             if ((int)proc.MainWindowHandle != 0 && proc.MainWindowTitle.Length > 0
                 && !Apps.ContainsKey(proc.MainWindowTitle))
@@ -54,19 +73,24 @@ namespace SpencerAutoClicker.Source.Frontend
         }
 
         // Methods
-        private void populateProcesses()
+        public InputSetting GetHotkeyConfig()
+        {
+            return hotkeyConfig;
+        }
+
+        private void PopulateProcesses()
         {
             // Populate Processes
             Apps = new SortedDictionary<string, Process>();
             List<Process> processes = Process.GetProcesses().ToList();
             foreach (Process proc in processes)
             {
-                addProcess(proc);
+                AddProcess(proc);
             }
         }
 
         // Setup one way data binding
-        private void setupProcessDataBinding()
+        private void SetupProcessDataBinding()
         {
             process_list.ItemsSource = Apps;
             process_list.SelectedValuePath = "Value.MainWindowTitle";
@@ -86,7 +110,7 @@ namespace SpencerAutoClicker.Source.Frontend
             if (click_interval.Text.Length <= 0)
             {
                 click_interval.Text = "20";
-                _clicker.ClickInterval = 20;
+                ClickerSettings.ClickInterval = 20;
             }
             else
             {
@@ -94,7 +118,7 @@ namespace SpencerAutoClicker.Source.Frontend
                 if (click_interval.Text.Length <= 2 && currentInterval < 20)
                 {
                     click_interval.Text = "20";
-                    _clicker.ClickInterval = 20;
+                    ClickerSettings.ClickInterval = 20;
                 }
             }
         }
@@ -102,21 +126,24 @@ namespace SpencerAutoClicker.Source.Frontend
         // true = show 'start clicker', false = show 'stop clicker'
         private void SetClickerButtonState(bool state)
         {
-            if (state)
+            Dispatcher.Invoke(() =>
             {
-                clicker_button.Content = "Start Clicker (" + _clicker.Hotkey_Mouse_Click + ")";
-                clicker_button.Background = StartColor;
-            }
-            else
-            {
-                clicker_button.Content = "Stop Clicker (" + _clicker.Hotkey_Mouse_Click + ")";
-                clicker_button.Background = StopColor;
-            }
-
+                if (state)
+                {
+                    clicker_button.Content = string.Format(START_CLICKER_BASE_STRING, ClickerSettings.Hotkey.ToString());
+                    clicker_button.Background = StartColor;
+                }
+                else
+                {
+                    clicker_button.Content = string.Format(STOP_CLICKER_BASE_STRING, ClickerSettings.Hotkey.ToString());
+                    clicker_button.Background = StopColor;
+                }
+            });
         }
 
         private void SetInputEnabled(bool enabled)
         {
+            InputsEnabled = enabled;
             click_interval.IsReadOnly = !enabled;
             hold_mode.IsEnabled = enabled;
         }
@@ -136,35 +163,22 @@ namespace SpencerAutoClicker.Source.Frontend
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            populateProcesses();
-            setupProcessDataBinding();
-            click_interval.Text = _clicker.ClickInterval.ToString();
+            PopulateProcesses();
+            SetupProcessDataBinding();
+            click_interval.Text = ClickerSettings.ClickInterval.ToString();
         }
 
         // Cleanup when clicker window is closed
         private void OnWindowClose(object sender, EventArgs e)
         {
             _hotkeyHook.CleanupActiveHooks();
+            ClickerSettings.OnHotkeyChanged -= OnHotkeyChanged;
             Environment.Exit(Environment.ExitCode);
         }
 
-        private void HandleClickDown()
+        private void OnHotkeyChanged(object sender, string newHotkeyString)
         {
-            if (_clicker.HoldDownRunning)
-            {
-                SetInputEnabled(true);
-                SetClickerButtonState(true);
-                _clicker.StopMouseDown();
-            }
-            else
-            {
-                if (_clicker.IsProcessSelected())
-                {
-                    SetInputEnabled(false);
-                    SetClickerButtonState(false);
-                    _clicker.StartMouseDown();
-                }
-            }
+            SetClickerButtonState(!_clicker.ClickerRunning);
         }
 
         private void HandleClickerAuto()
@@ -186,17 +200,23 @@ namespace SpencerAutoClicker.Source.Frontend
             }
         }
 
-        private void Clicker_Handler(object sender, RoutedEventArgs e)
+        private void OnHotkeyTriggered(object sender, RoutedEventArgs e)
         {
-            VerifyInterval();
-            if (hold_mode.IsChecked.Value)
+            Dispatcher.Invoke(new Action(() =>
             {
-                HandleClickDown();
-            }
-            else
-            {
+                VerifyInterval();
                 HandleClickerAuto();
-            }
+            }));
+        }
+
+        private void OnEnabledHoldMode(object sender, RoutedEventArgs _)
+        {
+            ClickerSettings.ShouldHoldDown = true;
+        }
+
+         private void OnDisableHoldMode(object sender, RoutedEventArgs _)
+        {
+            ClickerSettings.ShouldHoldDown = false;
         }
 
         private void Click_Interval_TextChanged(object sender, TextChangedEventArgs e)
@@ -204,7 +224,7 @@ namespace SpencerAutoClicker.Source.Frontend
             if (click_interval.Text.Length > 0)
             {
                 int newClickInterval = int.Parse(click_interval.Text);
-                _clicker.ClickInterval = newClickInterval;
+                ClickerSettings.ClickInterval = newClickInterval;
             }
         }
 
@@ -235,9 +255,10 @@ namespace SpencerAutoClicker.Source.Frontend
         {
             if (!process_list.IsDropDownOpen)
             {
-                populateProcesses();
-                setupProcessDataBinding();
+                PopulateProcesses();
+                SetupProcessDataBinding();
             }
         }
+        
     }
 }
