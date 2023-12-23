@@ -20,5 +20,5 @@ Libraries & API(s):
 ```
 dotnet publish -p:PublishProfile=FolderProfile
 ```
-1. Built executable will be located in `SpencerAutoClicker/Output/` if built with no errors.
+3. Built executable will be located in `SpencerAutoClicker/Output/` if built with no errors.
 
