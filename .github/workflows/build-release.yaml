@@ -35,17 +35,4 @@ jobs:
           name: Release ${{ env.SHORT_SHA }}
           draft: false
           prerelease: false
-
-      - name: Upload release asset
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.rest.repos.uploadReleaseAsset({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: context.payload.release.id,
-              name: 'SpencerAutoClicker.exe',
-              data: fs.readFileSync('./SpencerAutoClicker/Output/SpencerAutoClicker.exe'),
-              content_type: 'application/octet-stream'
-            })
+          files: ./SpencerAutoClicker/Output/SpencerAutoClicker.exe
