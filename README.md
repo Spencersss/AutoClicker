@@ -1,11 +1,16 @@
-### Spencer Auto Clicker
+# Spencer Auto Clicker
 
 This is a small project that I had originally implemented to enable both myself and friends to auto-click a video game whilst the window was unfocused and running in the background.
 
-The following technologies were used to develop this application:
+The following were used to develop this application:
+- Visual Studio 2022 Community
 - .NET 6.0
 - Windows Presentation Foundation (WPF)
-- Ninject
+
+Libraries & API(s):
+- Ninject: http://www.ninject.org/
+- SharpHook: https://github.com/TolikPylypchuk/SharpHook
+- Win32 API: https://learn.microsoft.com/en-us/windows/win32/apiindex/windows-api-list
 
 ## Building Executable
 
