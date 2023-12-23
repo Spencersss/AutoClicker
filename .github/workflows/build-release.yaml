@@ -27,21 +27,24 @@ jobs:
           short_sha=$(echo ${GITHUB_SHA} | cut -c -7)
 
       - name: Create GitHub release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Required for creating releases
+        uses: softprops/action-gh-release@v4
         with:
-          tag_name: $short_sha 
-          release_name: Release $short_sha
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ env.short_sha }}
+          release_name: Release ${{ env.short_sha }}
           draft: false
           prerelease: false
 
-      - name: Upload release artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Required for uploading assets
+      - name: Upload release asset
+        uses: actions/github-script@v6
         with:
-          upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./SpencerAutoClicker/Output/SpencerAutoClicker.exe  # Adjust the path if needed
-          asset_name: SpencerAutoClicker.exe
-          asset_content_type: application/octet-stream
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.repos.uploadReleaseAsset({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: context.payload.release.id,
+              name: 'SpencerAutoClicker.exe',
+              data: fs.readFileSync('./SpencerAutoClicker/Output/SpencerAutoClicker.exe'),
+              content_type: 'application/octet-stream'
+            })
