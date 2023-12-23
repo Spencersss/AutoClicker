@@ -22,13 +22,17 @@ jobs:
       - name: Build and publish
         run: dotnet publish -p:PublishProfile=FolderProfile
 
+      - name: Get short SHA
+        run: |
+          short_sha=$(echo ${GITHUB_SHA} | cut -c -7)
+
       - name: Create GitHub release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Required for creating releases
         with:
-          tag_name: ${{ github.sha }}  # Use commit SHA as the release tag
-          release_name: Release ${{ github.sha }}
+          tag_name: $short_sha 
+          release_name: Release $short_sha
           draft: false
           prerelease: false
 
