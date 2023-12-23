@@ -31,7 +31,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ env.short_sha }}
-          release_name: Release ${{ env.short_sha }}
+          name: Release ${{ env.short_sha }}
           draft: false
           prerelease: false
 
