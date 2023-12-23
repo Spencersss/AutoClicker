@@ -25,13 +25,14 @@ jobs:
       - name: Get short SHA
         run: |
           short_sha=$(echo ${GITHUB_SHA} | cut -c -7)
+          echo "SHORT_SHA=$short_sha" >> $GITHUB_ENV
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v0.1.15
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: ${{ env.short_sha }}
-          name: Release ${{ env.short_sha }}
+          tag_name: ${{ env.SHORT_SHA }}
+          name: Release ${{ env.SHORT_SHA }}
           draft: false
           prerelease: false
 
