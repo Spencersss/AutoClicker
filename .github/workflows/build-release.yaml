@@ -1,0 +1,43 @@
+name: Build and Release Clicker
+
+on:
+  push:
+    branches: [master]  # Trigger on pushes to the main branch
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest  # Use a suitable runner for .NET 6
+
+    steps:
+      - uses: actions/checkout@v3  # Checkout the repository code
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build and publish
+        run: dotnet publish -p:PublishProfile=FolderProfile
+
+      - name: Create GitHub release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Required for creating releases
+        with:
+          tag_name: ${{ github.sha }}  # Use commit SHA as the release tag
+          release_name: Release ${{ github.sha }}
+          draft: false
+          prerelease: false
+
+      - name: Upload release artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Required for uploading assets
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ./SpencerAutoClicker/Output/SpencerAutoClicker.exe  # Adjust the path if needed
+          asset_name: SpencerAutoClicker.exe
+          asset_content_type: application/octet-stream
