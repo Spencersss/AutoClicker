@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SpencerAutoClicker.Source.Backend.Messaging
+﻿namespace SpencerAutoClicker.Source.Model.Messaging
 {
     public static class ProcessMessenger
     {
