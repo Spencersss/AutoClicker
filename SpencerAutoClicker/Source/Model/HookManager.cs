@@ -1,15 +1,9 @@
 ﻿using SharpHook;
-using SharpHook.Native;
-using SpencerAutoClicker.Source.Frontend;
 using System;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
-using System.Windows.Threading;
 
-namespace SpencerAutoClicker.Source.Backend
+namespace SpencerAutoClicker.Source.Model
 {
     public class HookManager
     {
@@ -36,7 +30,8 @@ namespace SpencerAutoClicker.Source.Backend
             {
                 Hook.Dispose();
                 Trace.WriteLine("Successfully destroyed");
-            } catch (HookException e)
+            }
+            catch (HookException e)
             {
                 Trace.WriteLine(e);
             }

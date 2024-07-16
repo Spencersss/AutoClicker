@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Security.Principal;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using SharpHook.Native;
-using SpencerAutoClicker.Source.Backend.Natives;
-using SpencerAutoClicker.Source.Frontend;
+using SpencerAutoClicker.Source.Model.Natives;
 
-namespace SpencerAutoClicker.Source.Backend
+namespace SpencerAutoClicker.Source.Model
 {
     public class Clicker
     {

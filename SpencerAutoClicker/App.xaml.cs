@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using Ninject;
 using Ninject.Parameters;
-using SpencerAutoClicker.Source.Backend;
-using SpencerAutoClicker.Source.Backend.Helpers;
 using SpencerAutoClicker.Source.Frontend;
-using SpencerAutoClicker.Source.Frontend.Controls;
+using SpencerAutoClicker.Source.Model;
+using SpencerAutoClicker.Source.Model.Helpers;
 
 namespace SpencerAutoClicker
 {

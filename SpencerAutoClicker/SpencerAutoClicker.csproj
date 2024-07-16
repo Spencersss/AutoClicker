@@ -24,10 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Remove="Source\Frontend\App.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="Images\AppIcon.ico" />
   </ItemGroup>
 
@@ -45,6 +41,11 @@
     <ApplicationDefinition Update="App.xaml">
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Source\Backend\" />
+    <Folder Include="Source\ViewModel\" />
   </ItemGroup>
 
 </Project>

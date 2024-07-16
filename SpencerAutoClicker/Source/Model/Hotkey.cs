@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using Accessibility;
 using SharpHook.Native;
-using SpencerAutoClicker.Source.Backend.Exceptions;
-using SpencerAutoClicker.Source.Backend.Natives;
+using SpencerAutoClicker.Source.Model.Exceptions;
 
-namespace SpencerAutoClicker.Source.Backend
+namespace SpencerAutoClicker.Source.Model
 {
     public class Hotkey
     {
@@ -31,7 +24,7 @@ namespace SpencerAutoClicker.Source.Backend
             KeyCode = (ushort)keyVal;
         }
 
-        public Hotkey(string inputCode) 
+        public Hotkey(string inputCode)
         {
             PopulateFromRawInputCode(inputCode);
         }
@@ -72,11 +65,13 @@ namespace SpencerAutoClicker.Source.Backend
             {
                 Type = InputType.Keyboard;
                 KeyCode = (ushort)Enum.Parse(typeof(KeyCode), inputCode);
-            } else if (isMouseInput)
+            }
+            else if (isMouseInput)
             {
                 Type = InputType.Mouse;
                 KeyCode = (ushort)Enum.Parse(typeof(SharpHook.Native.MouseButton), inputCode);
-            } else
+            }
+            else
             {
                 throw new InputNotFoundException(inputCode);
             }

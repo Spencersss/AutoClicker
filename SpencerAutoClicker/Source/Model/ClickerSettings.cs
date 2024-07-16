@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using SharpHook.Native;
 
-namespace SpencerAutoClicker.Source.Backend
+namespace SpencerAutoClicker.Source.Model
 {
     public static class ClickerSettings
     {
@@ -18,7 +12,8 @@ namespace SpencerAutoClicker.Source.Backend
         private static Hotkey _hotkey;
 
         // Config values
-        public static Hotkey Hotkey { 
+        public static Hotkey Hotkey
+        {
             get => _hotkey;
             set
             {

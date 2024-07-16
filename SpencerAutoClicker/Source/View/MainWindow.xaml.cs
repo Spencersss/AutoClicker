@@ -1,9 +1,8 @@
 ﻿using Ninject;
-using SpencerAutoClicker.Source.Backend;
 using SpencerAutoClicker.Source.Frontend.Controls;
+using SpencerAutoClicker.Source.Model;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
